@@ -1,0 +1,13 @@
+{
+  "module_name": "camera-utils",
+  "visibility": "public",
+  "namespace": "viam-labs",
+  "language": "go",
+  "resource_type": "component",
+  "resource_subtype": "camera",
+  "model_name": "mask-camera",
+  "initialize_git": false,
+  "generator_version": "0.1.0",
+  "generated_on": "2026-05-16T19:11:08.966833Z",
+  "module_readme_link": "README.md"
+}
