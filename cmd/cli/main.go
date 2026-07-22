@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"camerautils"
+	"context"
+	camera "go.viam.com/rdk/components/camera"
 	"go.viam.com/rdk/logging"
 	"go.viam.com/rdk/resource"
-	camera "go.viam.com/rdk/components/camera"
 )
 
 func main() {
