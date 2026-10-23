@@ -2,7 +2,6 @@ package camerautils
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"image"
 	"math"
@@ -20,8 +19,7 @@ import (
 )
 
 var (
-	MaskCamera       = resource.NewModel("viam-labs", "camera-utils", "mask-camera")
-	errUnimplemented = errors.New("unimplemented")
+	MaskCamera = resource.NewModel("viam-labs", "camera-utils", "mask-camera")
 )
 
 func init() {
@@ -94,7 +92,7 @@ func loadMask(path string) (maskGrid, error) {
 	if err != nil {
 		return maskGrid{}, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	image, _, err := image.Decode(f)
 	if err != nil {
 		return maskGrid{}, err
@@ -223,17 +221,24 @@ func (s *cameraUtilsMaskCamera) NextPointCloud(ctx context.Context, extra map[st
 		return nil, err
 	}
 
+	var setErr error
 	basePointCloud.Iterate(0, 0, func(p r3.Vector, d pointcloud.Data) bool {
 		px, py, err := properties.PointToPixel(p)
 		if err != nil {
 			return true
 		}
 		if s.mask.showPixel(px, py) {
-			pointCloudRetVal.Set(p, d)
+			if err := pointCloudRetVal.Set(p, d); err != nil {
+				setErr = err
+				return false
+			}
 			return true
 		}
 		return true
 	})
+	if setErr != nil {
+		return nil, setErr
+	}
 
 	return pointCloudRetVal, nil
 }
